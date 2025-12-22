@@ -1,0 +1,21 @@
+.video-call-container {
+  text-align: center;
+  background: #f4f6f8;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.video-area {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+video {
+  width: 45%;
+  border: 2px solid #00aaff;
+  border-radius: 12px;
+  background-color: #000;
+}
