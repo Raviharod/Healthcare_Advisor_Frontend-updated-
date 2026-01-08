@@ -37,9 +37,6 @@ const specialistTypes = [
 
 function Consltation() {
   const [selectedType, setSelectedType] = useState("General Physician");
-  const [location, setLocation] = useState("");
-  const [availability, setAvailability] = useState("All");
-  const [fee, setFee] = useState("All");
   const [doctors, setDoctors] = useState([]);
   const [patientInfo, setPatientInfo] = useState(null);
   // const [onlineUsers, setOnlineusers] = useState([]);
@@ -88,7 +85,7 @@ function Consltation() {
         };
   }, []);
 
-  const handleSocketInfoForVideo = (name, socketId, isOnline) => {
+  const handleSocketInfoForVideo = (name, socketId, isOnline, imgUrl) => {
     if (!isOnline) {
       dispatch(notificationActions.setNotificationMsg("Doctor is not online. Please try again later."));
       return;
@@ -106,7 +103,8 @@ function Consltation() {
     dispatch(doctorActions.setDoctorSocketInfo({
       name: name,
       socketId: socketId,
-      isOnline: isOnline
+      isOnline: isOnline,
+      imgUrl
     }));
 
     // Set invitation as pending
@@ -163,7 +161,7 @@ function Consltation() {
   }, [patientInfo, dispatch, navigate]);
 
   return (
-    <div className="bg-[#e2eef3] min-h-screen pb-8">
+    <div className="bg-[#e9f1ff] min-h-screen pb-8">
       {/* <div className="h-50 w-3xl bg-amber-200 p-2">
         {onlineUsers.map((user)=>{
           return <li>{user.name}: {user.socketId}</li>
@@ -182,7 +180,7 @@ function Consltation() {
                     className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold shadow-sm transition ${
                       selectedType === type.label
                         ? "bg-[#065084] text-white"
-                        : "bg-[#5b9dcc] text-white hover:bg-[#597c8279]"
+                        : "bg-[#5b9dcc] text-white hover:bg-[#69a0aa79]"
                     }`}
                     onClick={() => setSelectedType(type.label)}
                   >
@@ -236,7 +234,7 @@ function Consltation() {
                             <FaPhoneAlt /> Call Now
                           </button>
                           <Link
-                            onClick={() => handleSocketInfoForVideo(doc._doc.name, doc.socketId, doc.isOnline)}
+                            onClick={() => handleSocketInfoForVideo(doc._doc.name, doc.socketId, doc.isOnline, doc._doc.imgUrl)}
                             // to="/enterVideo"
                             className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
                           >

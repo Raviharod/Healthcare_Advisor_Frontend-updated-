@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { notificationActions } from "../../slices/notificationSlice";
 import { useNavigate } from "react-router-dom";
-
+import { doctorActions } from "../../slices/doctorSlice";
 
 const VITE_USER_LOGIN = import.meta.env.VITE_USER_LOGIN;
 
@@ -33,6 +33,7 @@ const Login = () => {
       }
       if(res.status === 200){
         setMessage("Login Successful!😊");
+        dispatch(doctorActions.setIsLogin(true));
         dispatch(notificationActions.setNotificationMsg("Login Successful!😊"));
         navigate("/");
       }

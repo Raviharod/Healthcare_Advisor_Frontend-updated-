@@ -25,6 +25,7 @@ function InvitationNotification( {invitation}, onClose) {
     
     // Update Redux state
     // dispatch(doctorActions.setRoomId(roomId));
+    dispatch(doctorActions.setInvitationAccepted(true));
     dispatch(doctorActions.clearInvitation());
     
 
@@ -41,9 +42,11 @@ function InvitationNotification( {invitation}, onClose) {
     });
 
     // Clear invitation state
-    // dispatch(doctorActions.setInvitationRejected(true));
+    dispatch(doctorActions.setInvitationRejected(true));
     dispatch(doctorActions.clearInvitation());
-  };
+    navigate("/consultation");
+  
+  }
 
   return (
     <>

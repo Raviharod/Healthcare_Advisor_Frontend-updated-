@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { MdOutlineHealthAndSafety } from "react-icons/md";//CR
-import { FaInstagram } from "react-icons/fa";
-import { FaFacebook } from "react-icons/fa";
-import { FaSquareXTwitter } from "react-icons/fa6";
-import { FaPhone } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
+
 
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -24,11 +19,12 @@ const VITE_USER_LOGOUT = import.meta.env.VITE_USER_LOGOUT;
 
 function Header() {
   const [user, setUser] = useState(null);
-  const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const invitation = useSelector((state) => state.doctor.invitation);
-  const notificationActive = useSelector(state=>state.notification.isActive);
+  const isLogin = useSelector((state) => state.doctor.isLogin);
+  const notificationActive = useSelector(state => state.notification.isActive);
+  
 
   // Fetch user login details
   useEffect(() => {
@@ -38,17 +34,17 @@ function Header() {
       });
       const result = await res.json();
       if (res.status == 200) {
-        setIsLogin(true);
         setUser(result.user);
+        dispatch(doctorActions.setIsLogin(true));
         socket.emit("onlineUser", result.user);
       }
       if (res.status == 400) {
-        setIsLogin(false);
         setUser(null);
+        // dispatch(notificationActions.setNotificationMsg("No login info found!, please login to continue"));
       }
     };
     fetchLogingDetails();
-  }, [notificationActive]);
+  }, [isLogin, notificationActive]);
 
   // Register socket listener for video invitations (only for doctors)
   // This is separate from the fetch to avoid race conditions
@@ -66,11 +62,12 @@ function Header() {
     const handleVideoInvitation = (data) => {
       console.log("🎉 Invitation received on doctor side:", data);
       // console.log("Current socket ID:", socket.id);
-      dispatch(doctorActions.setInvitationPending({
-        ...data,
-        doctorName: user.name,
-        doctorSocketId: socket.id
-      }));
+      
+        dispatch(doctorActions.setInvitationPending({
+          ...data,
+          doctorName: user.name,
+          doctorSocketId: socket.id
+        }));
     };
 
     const handleOnlineUsers = (users) => {
@@ -108,7 +105,7 @@ function Header() {
     });
     const result = await res.json();
     if (res.status == 200) {
-      setIsLogin(false);
+      dispatch(doctorActions.setIsLogin(false));
       dispatch(notificationActions.setNotificationMsg("User Logout Successfully!"))
       navigate("/login");
     }
@@ -129,21 +126,22 @@ function Header() {
 
   return (
     <>
-      {invitation.isPending && user?.role === "doctor" && (
+      {invitation.isPending && user?.role === "doctor" && user.name === invitation.invitationData.doctorName && (
         <InvitationNotification invitation={invitation} onClose={() => dispatch(doctorActions.clearInvitation())} />
       )}
-      {notificationActive &&  <Notification></Notification>}
-      <header className="flex justify-between items-center p-5 text-black">
+      {notificationActive && <Notification></Notification>}
+      {/* <header className="flex justify-between items-center p-5 text-black">
         <div className="flex justify-between items-center gap-2">
           {/* logo */}
-          <div className="text-4xl text-black">
+      {/* <div className="text-4xl text-black">
             <MdOutlineHealthAndSafety />
+            
           </div>
           <div className="font-bold text-3xl text-[#2b7fff]">
             Healthcare Advisory
-          </div>
-        </div>
-        <div className="justify-between items-center gap-6 hidden md:flex">
+          </div> */}
+      {/* </div> */}
+      {/* <div className="justify-between items-center gap-6 hidden md:flex">
           <div className="flex items-center gap-4">
             <span className="bg-white shadow-2xl p-3 rounded-full"><FaPhone /></span>
             <div>
@@ -160,8 +158,8 @@ function Header() {
               <p className="font-bold text-[#2b8aff] italic">raviharod7828@gmail.com</p>
             </div>
           </div>
-        </div>
-        <div>
+        </div> */}
+      {/* <div>
           <ul className="flex gap-3">
             <li className="text-2xl hover:cursor-pointer">
               <a href="https://www.instagram.com/ravi_harod__/?hl=en"><FaInstagram /></a>
@@ -174,8 +172,8 @@ function Header() {
             </li>
           </ul>
         </div>
-      </header>
-      <header className="w-full flex justify-center">
+      </header> */}
+      <header className="w-full flex justify-center sticky top-0 z-10">
         <HeaderBox isLogin={isLogin} handleLogout={handleLogout} user={user}></HeaderBox>
       </header>
     </>

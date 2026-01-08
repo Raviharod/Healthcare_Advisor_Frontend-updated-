@@ -3,6 +3,7 @@ import axios from "axios";
 import HealthHead from "./HealthHead";
 import HealthBox from "./CatogoryBox";
 import { useEffect, useState } from "react";
+import {motion} from "framer-motion";
 
 const VITE_CATOGORIES_CONT_HEALT_SOLUTIONS = import.meta.env.VITE_CATOGORIES_CONT_HEALT_SOLUTIONS;
 
@@ -22,17 +23,28 @@ function CatogoriesContainer(){
        })
     }, [])
 
+    const duplicateCatogories = [...healthCatogories, ...healthCatogories]
+
     return (
         <>
-        <div className="w-full h-auto flex flex-col gap-2.5 ps-9 pr-9 pb-6">
+        <div className="w-full overflow-hidden h-auto flex flex-col gap-2.5 ps-9 pr-9 pb-6  items-center justify-center mb-5">
           <HealthHead></HealthHead>
-          <div className="w-full h-auto flex justify-center items-center gap-4 flex-wrap">
+          <motion.div
+          animate={{
+            x: ['0%', '-50%']
+          }}
+          transition={{
+            ease:"linear",
+            duration: 20,
+            repeat: Infinity,
+          }}
+           className="w-full h-auto flex justify-center items-center gap-4">
             {
-              healthCatogories.map(sol=>{
-                return  <HealthBox key={sol.catogory} catogory={sol.catogory} icon={sol.iconClass} details={sol.detail}></HealthBox>
+              duplicateCatogories.map((sol, index)=>{
+                return  <HealthBox key={index} catogory={sol.catogory} icon={sol.iconClass} details={sol.detail}></HealthBox>
               })
             }
-          </div>
+          </motion.div>
         </div>
         </>
     )

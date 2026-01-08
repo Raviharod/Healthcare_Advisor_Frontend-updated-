@@ -44,7 +44,7 @@ function Home() {
                 {/* Doctor Image */}
                 <div className="relative">
                   <img 
-                    className="w-full h-auto max-w-md mx-auto lg:max-w-full rounded-2xl" 
+                    className="w-[80%] h-auto max-w-md mx-auto lg:max-w-full rounded-2xl" 
                     src="/images/doctorHomeImage.png" 
                     alt="Doctor" 
                   />
@@ -78,19 +78,19 @@ function Home() {
           <div className="mt-3 sm:mt-4 lg:mt-5 pt-8 border-t border-gray-300/50 rounded-2xl bg-[#a8c8d5] p-2">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               <div className="text-center">
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">4500+</h3>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">4500+</h3>
                 <p className="text-sm sm:text-base text-gray-600 font-medium">Happy Patients</p>
               </div>
               <div className="text-center">
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">200</h3>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">200</h3>
                 <p className="text-sm sm:text-base text-gray-600 font-medium">Hospital Room</p>
               </div>
               <div className="text-center">
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">500+</h3>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">500+</h3>
                 <p className="text-sm sm:text-base text-gray-600 font-medium">Award Win</p>
               </div>
               <div className="text-center">
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-2">20+</h3>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-2">20+</h3>
                 <p className="text-sm sm:text-base text-gray-600 font-medium">Ambulance</p>
               </div>
             </div>

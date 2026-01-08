@@ -2,9 +2,11 @@ import React, { useEffect, useRef } from "react";
 import io from "socket.io-client";
 import "./videocall.css";
 import { doctorActions } from "../../slices/doctorSlice";
+import { notificationActions } from "../../slices/notificationSlice";
 import { useDispatch, useSelector } from "react-redux";
 // import patient from "../../../../backend/src/models/patient";
 import VideoUi from "../../Pages/VideoCallUi/VideoUi";
+import { useNavigate } from "react-router-dom";
 
 const VITE_SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
@@ -12,7 +14,8 @@ export const socket = io(VITE_SOCKET_URL);
 
 const VideoCall = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
+  const isMediaAccessGranted = useSelector(state=>state.doctor.isMediaAccessGranted);
   const invitation = useSelector((state) => state.doctor.invitation);
 
   const localVideoRef = useRef(null);
@@ -32,11 +35,13 @@ const VideoCall = () => {
     try {
       // Get user media if we don't have a stream yet
       if (!localStreamRef.current) {
+        // dispatch(notificationActions.setNotificationMsg("Please allow access to camera and microphone"));
         localStreamRef.current = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: true,
         });
-        console.log("Got user media stream");
+        // dispatch(notificationActions.setNotificationMsg("Camera and microphone access granted"));
+        // console.log("Got user media stream");
       }
 
       // Set video element srcObject if it's available
@@ -101,25 +106,28 @@ const VideoCall = () => {
   }, [invitation.isInvitationAccepted]);
 
   useEffect(() => {
-    socket.on("video-invitation-accepted", (data) => {
+    socket.on("video-invitation-accepted-by-doctor", (data) => {
       console.log("Invitation accepted", data);
       dispatch(doctorActions.setInvitationAccepted(true));
     });
 
-    socket.on("video-invitation-rejected", (data) => {
+    socket.on("video-invitation-rejected-by-doctor", (data) => {
       console.log("Invitation rejected", data);
       console.log(invitation);
       dispatch(doctorActions.setInvitationAccepted(false));
       dispatch(doctorActions.setInvitationRejected(true));
+      dispatch(notificationActions.setNotificationMsg(`Invitation rejected by ${data.doctorName}`))
+      navigate("/consultation");
+      
     });
   }, [invitation.isInvitationAccepted, invitation.isInvitationRejected]);
 
   // ----------- SOCKET EVENTS -------------
   useEffect(() => {
-    socket.on("start-video-call", async () => {
+    socket.on("start-video-call-by-doctor", async () => {
       console.log("Starting video call...sending offer to doctor");
       // Patient side: we already know the doctor's socket id from invitation
-      if (invitation?.invitationData?.doctorSocketId) {
+      if (invitation?.invitationData?.doctorSocketId && invitation?.invitationData?.patientSocketId && invitation?.isInvitationAccepted) {
         remoteSocketIdRef.current = invitation.invitationData.doctorSocketId;
       }
       await setupConnection();

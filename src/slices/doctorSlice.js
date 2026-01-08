@@ -14,7 +14,8 @@ const doctorSlice = createSlice({
       isInvitationAccepted:false,
       invitationData: null,
       isInvitationRejected:false,
-    }
+    },
+    isLogin:false
   },
   reducers:{
     setOnlineDoctors(state, action){
@@ -41,6 +42,9 @@ const doctorSlice = createSlice({
     setRoomId(state, action){
       state.invitation.roomId = action.payload;
       state.invitation.isPending = false;
+    },
+    setIsLogin(state, action){
+      state.isLogin = action.payload;
     }
   }
 });
