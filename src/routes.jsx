@@ -8,6 +8,9 @@ import EnterVideoCall from './Pages/VideoCallUi/EnterVideoCall.jsx'
 // import VideoCall from './Pages/VideoCall/VideoCall.jsx'
 import Signup from './Pages/signup/Signup.jsx'
 import VideoCall from './components/videocall/VideoCall.jsx'
+import ProductContainer from './Pages/products/ProductContainer.jsx'
+import CartContainer from './Pages/Cart/CartContainer.jsx'
+import AddProduct from './Pages/addProducts/AddProduct.jsx'
 
 const router = createBrowserRouter([
   {
@@ -61,6 +64,30 @@ const router = createBrowserRouter([
   children:[{
     path:"/signup",
     element:<Signup/>,
+  }]
+},
+{
+  path:"/products",
+  element:<App></App>,
+  children:[{
+    path:"/products",
+    element:<ProductContainer></ProductContainer>
+  }]
+},
+{
+  path:"/myCart",
+  element:<App></App>,
+  children:[{
+    path:"/myCart",
+    element:<CartContainer></CartContainer>
+  }]
+},
+{
+  path:"/addProduct",
+  element:<App></App>,
+  children:[{
+    path:"/addProduct",
+    element:<AddProduct></AddProduct>
   }]
 }
 ])

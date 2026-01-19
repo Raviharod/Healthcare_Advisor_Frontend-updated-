@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { motion } from "motion/react"
 
 import { doctorActions } from "../../slices/doctorSlice";
 import { notificationActions } from "../../slices/notificationSlice";
+import { userActionSliceActions } from "../../slices/userActionsSlice";
+
 
 import VideoUi from "../VideoCallUi/VideoUi";
 
@@ -22,6 +25,9 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { socket } from "../../components/videocall/VideoCall";
+import { FaSearch } from "react-icons/fa";
+import { FaUserDoctor } from "react-icons/fa6";
+import { LuMessageSquareMore } from "react-icons/lu";
 
 const VITE_FETCH_DOCTORS = import.meta.env.VITE_FETCH_DOCTORS;
 const VITE_FETCH_PATIENT_INFO = import.meta.env.VITE_FETCH_PATIENT_INFO;
@@ -43,11 +49,12 @@ function Consltation() {
   const navigate = useNavigate();
   const doctorSoketInfo = useSelector((state) => state.doctor.doctorSocketInfo);
   const dispatch = useDispatch();
-  const onlineDoctors = useSelector((state)=>state.doctor.doctors);
-  const invitation = useSelector((state)=>state.doctor.invitation);
+  const onlineDoctors = useSelector((state) => state.doctor.doctors);
+  const invitation = useSelector((state) => state.doctor.invitation);
+  const userAction = useSelector((state) => state.userAction.sideBtnSelected)
 
 
-  useEffect(()=>{
+  useEffect(() => {
     async function fetchDoctors() {
       const res = await fetch(VITE_FETCH_DOCTORS, {
         credentials: "include",
@@ -78,11 +85,11 @@ function Consltation() {
     }
     fetchPatientInfo();
 
-     return () => {
-          socket.off("current-onlineUsers");
-          socket.off("video-invitation-accepted");
-          socket.off("video-invitation-rejected");
-        };
+    return () => {
+      socket.off("current-onlineUsers");
+      socket.off("video-invitation-accepted");
+      socket.off("video-invitation-rejected");
+    };
   }, []);
 
   const handleSocketInfoForVideo = (name, socketId, isOnline, imgUrl) => {
@@ -124,16 +131,16 @@ function Consltation() {
       patientSocketId: socket.id,
       patientId: patientInfo.id
     };
-    
+
     console.log("📤 Patient sending invitation:", invitationPayload);
     console.log("Patient socket ID:", socket.id);
     console.log("Target doctor socket ID:", socketId);
-    
+
     socket.emit("invitation", invitationPayload);
 
     // Navigate to video call page (will show "Inviting..." state)
     navigate("/enterVideo");
-    
+
   }
 
   // Set up socket listeners for invitation responses (only once)
@@ -161,99 +168,169 @@ function Consltation() {
   }, [patientInfo, dispatch, navigate]);
 
   return (
-    <div className="bg-[#e9f1ff] min-h-screen pb-8">
-      {/* <div className="h-50 w-3xl bg-amber-200 p-2">
-        {onlineUsers.map((user)=>{
-          return <li>{user.name}: {user.socketId}</li>
-        })}
-      </div> */}
-      {doctors ? (
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8 mt-8 px-4">
-          {/* Left: Specialists List */}
-          <div className="flex-1">
-            <h2 className="text-3xl font-bold mb-6">Specialists</h2>
-            <div className="w-full flex flex-wrap gap-4 mb-8 whitespace-nowrap">
-              <div className=" flex flex-wrap gap-4">
-                {specialistTypes.map((type) => (
-                  <button
-                    key={type.label}
-                    className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold shadow-sm transition ${
-                      selectedType === type.label
-                        ? "bg-[#065084] text-white"
-                        : "bg-[#5b9dcc] text-white hover:bg-[#69a0aa79]"
-                    }`}
-                    onClick={() => setSelectedType(type.label)}
-                  >
-                    {type.icon}
-                    {type.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {/* Doctor Cards */}
-            <div className="w-full flex flex-col gap-6">
-              {doctors
-                .filter(
-                  (doc) =>
-                    selectedType === "General Physician" ||
-                    doc._doc.specialization === selectedType
-                )
-                .map((doc, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-white rounded-2xl shadow flex flex-col md:flex-row items-center md:items-stretch overflow-y-hidden"
-                  >
-                    <img
-                      src={doc._doc.imgUrl}
-                      alt={doc._doc.name}
-                      className="w-full md:w-48 h-48 object-cover"
-                    />
-                    <div className="flex-1 p-6 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-2xl font-bold text-gray-900">
-                          {doc._doc.name}
-                        </h3>
-                        <p className="text-gray-700 font-medium">
-                          {doc._doc.specialization}, Experience-{doc._doc.experience}{" "}
-                          years
-                        </p>
-                        {doc.isOnline ? <span><b className="text-blue-600">Online</b></span> : <span><b className="text-red-500">Offline</b></span>}
-                      </div>
-                      <div className="flex items-center justify-between mt-4">
-                        <span
-                          className={`px-4 py-1 rounded-full font-semibold ${
-                            doc._doc.consultationFees === 0
-                              ? "bg-[#2b7fff] text-white"
-                              : "bg-[#2b7fff] text-white"
-                          }`}
+    <>
+      <div className="bg-[#e2e4e4] h-screen w-full flex overflow-hidden">
+
+        {/* --- SIDEBAR (Fixed Left) --- */}
+        {/* Added flex-shrink-0 to prevent sidebar from collapsing */}
+        <motion.div
+          animate={{
+            x: [-150, 1]
+          }}
+          transition={{ duration: 1, type: "spring", bounce: 0.3 }}
+          className="w-64 lg:w-52 h-full bg-white flex-shrink-0 overflow-y-auto hidden md:block">
+          {/* Placeholder for sidebar content */}
+          <div className="p-4">
+            <h2 className="font-bold text-xl mb-4">Menu</h2>
+            <ul className="flex flex-col gap-2">
+              <Link className={userAction == "search" ? "flex p-2 items-center gap-2 text-md bg-amber-300 rounded-2xl" : "flex p-2 items-center gap-2 text-md"} onClick={() => dispatch(userActionSliceActions.setSideBtnSelected("search"))}>
+                <span className="text-xl" ><FaSearch /> </span>Search Doctors</Link>
+              <Link className={userAction == "consultations" ? "flex p-2 items-center gap-2 text-md bg-amber-300 rounded-2xl" : "flex p-2 items-center gap-2 text-md"} onClick={() => dispatch(userActionSliceActions.setSideBtnSelected("consultations"))}>
+                <span className="text-xl"><FaUserDoctor /></span> Consultations</Link>
+
+              <Link className={userAction == "message" ? "flex p-2 items-center gap-2 text-md bg-amber-300 rounded-2xl" : "flex p-2 items-center gap-2 text-md"}
+                onClick={() => dispatch(userActionSliceActions.setSideBtnSelected("message"))}>
+                <span className="text-xl"><LuMessageSquareMore /></span> Messages</Link>
+
+            </ul>
+          </div>
+        </motion.div>
+
+        {/* --- MAIN CONTENT (Right Side) --- */}
+        <div className="flex-1 flex flex-col h-full overflow-hidden relative">
+
+          {/* Scrollable Container */}
+          <div className="flex-1 overflow-y-auto scroll-smooth">
+
+            {doctors ? (
+              <div className="max-w-7xl mx-auto flex flex-col gap-8">
+
+                {/* --- STICKY CATEGORY HEADER --- */}
+                {/* Using z-20 and top-0 to stick to the top of the scrollable container */}
+                <div className="sticky top-0 backdrop-blur-sm p-4  shadow-sm">
+                  <div className="w-full flex flex-col gap-4">
+                    <div className="flex md:flex-row flex-col">
+                    {userAction == "search" && <motion.input
+                      animate={{
+                        width: "50%"
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 20,
+                      }}
+                      type="text" placeholder="Search Doctors" className="p-2 border-2 w- text-sm rounded-2xl mr-3"/>}
+                    <motion.h2
+                      className="text-xl md:text-2xl font-bold text-gray-800 hidden md:block">Connect With Available Doctors</motion.h2>
+
+</div>
+                    <div className="flex overflow-auto gap-4 pb-2 ">
+                      {specialistTypes.map((type) => (
+                        <button
+                          key={type.label}
+                          className={`flex-shrink-0 flex text-sm md:text-[16px] items-center gap-2 px-6 py-2 rounded-full font-semibold shadow-sm transition ${selectedType === type.label
+                            ? "bg-[#065084] text-white"
+                            : "bg-white text-gray-600 hover:bg-gray-100"
+                            }`}
+                          onClick={() => setSelectedType(type.label)}
                         >
-                          Consultation Charges ${doc._doc.consultationFees}
-                        </span>
-                        <div className="flex gap-4">
-                          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition">
-                            <FaPhoneAlt /> Call Now
-                          </button>
-                          <Link
-                            onClick={() => handleSocketInfoForVideo(doc._doc.name, doc.socketId, doc.isOnline, doc._doc.imgUrl)}
-                            // to="/enterVideo"
-                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-                          >
-                            <FaVideo /> Video Consult
-                          </Link>
-                        </div>
-                      </div>
+                          {type.icon}
+                          {type.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                ))}
-            </div>
+                </div>
+
+                {/* --- SCROLLABLE DOCTOR LIST --- */}
+                <div className="w-full h-auto flex flex-wrap gap-6 pb-20 p-4">
+                  {doctors
+                    .filter(
+                      (doc) =>
+                        selectedType === "General Physician" ||
+                        doc._doc.specialization === selectedType
+                    )
+                    .map((doc, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-white w-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row items-center md:items-stretch p-4 border border-gray-100"
+                      >
+                        <img
+                          src={doc._doc.imgUrl}
+                          alt={doc._doc.name}
+                          className="w-full md:w-38 h-54 md:h-auto object-cover rounded-xl"
+                        />
+                        <div className="flex-1 p-4 md:pl-8 flex flex-col justify-between w-full">
+                          <div>
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h3 className="text-xl md:text-2xl font-bold text-gray-900">
+                                  {doc._doc.name}
+                                </h3>
+                                <p className="text-[#065084] font-medium mt-1">
+                                  {doc._doc.specialization}
+                                </p>
+                              </div>
+                              {/* Heart icon placeholder or status could go here */}
+                            </div>
+
+                            <p className="text-gray-500 text-sm mt-2">
+                              Experience: {doc._doc.experience} years
+                            </p>
+
+                            <div className="mt-2">
+                              {doc.isOnline ? (
+                                <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">
+                                  <span className="w-2 h-2 bg-green-500 rounded-full"></span> Online
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-xs font-bold">
+                                  Offline
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col justify-between mt-2 gap-2">
+                            <div>
+                              <span className="text-lg font-bold text-gray-900">
+                                ${doc._doc.consultationFees} <span className="text-sm text-gray-400 font-normal">/ session</span>
+                              </span>
+                            </div>
+                            <div className="flex gap-3 w-full sm:w-auto">
+                              <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-2 rounded-lg transition">
+                                <FaPhoneAlt size={14} />
+                              </button>
+                              <Link
+                                onClick={() =>
+                                  handleSocketInfoForVideo(
+                                    doc._doc.name,
+                                    doc.socketId,
+                                    doc.isOnline,
+                                    doc._doc.imgUrl
+                                  )
+                                }
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#3F9AAE] hover:bg-[#2d7a8c] text-white font-semibold px-6 py-2 rounded-lg shadow-sm transition"
+                              >
+                                <FaVideo /> Consult
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <h1 className="text-xl text-gray-500">Loading Specialists...</h1>
+              </div>
+            )}
           </div>
         </div>
-      ) : (
-        <h1>Loading</h1>
-      )}
+      </div>
 
-       {/* <VideoUi></VideoUi> */}
-    </div>
+    </>
   );
 }
 

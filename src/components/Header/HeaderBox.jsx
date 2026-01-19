@@ -15,23 +15,22 @@ function HeaderBox({ isLogin, handleLogout, user }) {
 
     return (
         <>
-            <div className="w-[98%] h-auto p-4 bg-[#0F828C] rounded-4xl flex justify-between pl-6 pr-6 items-center z-10 mt-4">
+            <div className="w-full h-auto p-4 bg-white flex justify-between pl-6 pr-6 items-center z-10 shadow">
                 <div className="flex items-center">
                     <div className="text-4xl text-black">
                         <MdOutlineHealthAndSafety />
                     </div>
-                    <div className="text-md font-bold md:text-3xl text-white">
+                    <div className="text-md font-bold md:text-3xl text-green-800">
                         Healthcare Advisory
                     </div>
                 </div>
                 <div className="flex items-center">
                     <div className="mr-4">
-                        <ul className="md:flex items-center gap-6 hidden text-white">
-                            <Link className={tab == "home" ? "pl-4 pr-4 p-2 bg-[#78B9B5] rounded-4xl border-white border-1 shadow-2xl" : ""} to="/" onClick={() => setTab("home")}>Home</Link>
-                            {isLogin && <Link className={tab == "consult" ? "pl-4 pr-4 p-2 bg-[#78B9B5] rounded-4xl border-white border-1 shadow-2xl" : ""} onClick={() => setTab("consult")} to="/consultation">Consult Doctor</Link>}
-                            <Link className={tab == "about" ? "pl-4 pr-4 p-2 bg-[#78B9B5] rounded-4xl border-white border-1 shadow-2xl" : ""} onClick={() => setTab("about")}>About us</Link>
-                            <Link className={tab == "contact" ? "pl-4 pr-4 p-2 bg-[#78B9B5] rounded-4xl border-white border-1 shadow-2xl" : ""} onClick={() => setTab("contact")}>Contact</Link>
-                            <Link className={tab == "language" ? "pl-4 pr-4 p-2 bg-[#78B9B5] rounded-4xl border-white border-1 shadow-2xl" : ""} onClick={() => setTab("language")}>Language</Link>
+                        <ul className="md:flex items-center gap-6 hidden text-black">
+                            <Link className={tab == "home" ? "pl-4 pr-4 p-2 bg-[#3674B5] rounded-4xl shadow-2xl" : ""} to="/" onClick={() => setTab("home")}>Home</Link>
+                            {isLogin && <Link className={tab == "consult" ? "pl-4 pr-4 p-2 bg-[#3674B5] rounded-4xl  shadow-2xl" : ""} onClick={() => setTab("consult")} to="/consultation">Consult Doctor</Link>}
+                            <Link to="/products" className={tab == "products" ? "pl-4 pr-4 p-2 bg-[#3674B5] rounded-4xl shadow-2xl" : ""} onClick={() => setTab("products")}>Products</Link>
+                            <Link className={tab == "contact" ? "pl-4 pr-4 p-2 bg-[#3674B5] rounded-4xl  shadow-2xl" : ""} onClick={() => setTab("contact")}>Contact</Link>
                         </ul>
 
                         <div className="md:hidden text-3xl" onClick={() => setMenu(curr => {

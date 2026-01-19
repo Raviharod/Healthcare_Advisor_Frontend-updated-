@@ -6,7 +6,7 @@ import "./App.css";
 function App() {
   return (
     <>
-      <div className="w-full h-auto bg-[#e9f1ff]">
+      <div className="w-full h-auto bg-[#e3e3e3]">
         <Header />
         <Outlet></Outlet>
         <Footer></Footer>

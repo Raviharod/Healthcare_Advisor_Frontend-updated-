@@ -7,7 +7,7 @@ function HealthBox({catogory, icon, details}){
         <motion.div 
         whileHover={{scale:1.1}}
         className="h-auto w-50 bg-gradient-to-b from-[white] to-[#e9f1ff] rounded-2xl">
-            <div className="w-full h-auto flex gap-3 p-2 items-center">
+            <div className="w-50 h-auto flex gap-3 p-2 items-center">
                 <span className="bg-blue-400 p-2 rounded-full text-xl"><FaLaptopMedical /></span>
                 <h2 className="text-xl font-bold">{catogory}</h2>
             </div>
