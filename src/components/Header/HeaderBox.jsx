@@ -47,7 +47,7 @@ function HeaderBox({ isLogin, handleLogout, user }) {
                     className={tab === link.id ? activeClass : idleClass}
                     onClick={() => setTab(link.id)}
                   >
-                    {link.name}
+                    {link?.name}
                   </Link>
                 </li>
               ))}
@@ -79,7 +79,7 @@ function HeaderBox({ isLogin, handleLogout, user }) {
                     className="flex items-center bg-[#065084] rounded-full text-white h-10 cursor-pointer overflow-hidden shadow-md"
                   >
                     <div className="w-10 h-10 flex items-center justify-center font-bold bg-blue-700 flex-shrink-0">
-                      {user.name.slice(0,2) == "Dr" ? user?.name?.[4].toUpperCase():user.name[0]}
+                      {user?.name?.slice(0,2) == "Dr" ? user?.name?.[4].toUpperCase():user?.name[0]}
                     </div>
                     <AnimatePresence>
                       {isHover && (
