@@ -26,13 +26,12 @@ const Login = () => {
       });
       const result = await res.json();
       if(res.status === 400){
-        setMessage("sorry! some error occured during login😒");
+        dispatch(notificationActions.setNotificationMsg("sorry! some error occured during login😒"));
       }
       if(res.status === 401){
-        setMessage("sorry! some error occured during login😒")
-      }
+        dispatch(notificationActions.setNotificationMsg("sorry! some error occured during login😒"));     
+       }
       if(res.status === 200){
-        setMessage("Login Successful!😊");
         dispatch(doctorActions.setIsLogin(true));
         dispatch(notificationActions.setNotificationMsg("Login Successful!😊"));
         navigate("/");
@@ -40,7 +39,8 @@ const Login = () => {
 
 
     } catch(err){
-      console.log(err);
+      // console.log(err);
+      dispatch(notificationActions.setNotificationMsg("sorry! some error occured during login😒"));
     }
   }
 

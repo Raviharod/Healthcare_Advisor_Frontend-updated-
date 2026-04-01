@@ -133,7 +133,7 @@ const AddProduct = () => {
           <select className="mt-1 w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-teal-300"
           onChange={(e)=>setCatogory(e.target.value)}>
             <option>Select a category</option>
-            <option>Diagnostic & Monitoring Devices</option>
+            <option>Monitoring Devices</option>
             <option>Wellness</option>
             <option>Personal Care</option>
             <option>Supplements</option>

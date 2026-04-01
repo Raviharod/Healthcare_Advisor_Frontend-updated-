@@ -16,11 +16,14 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const sidebarItems = [
-  { name: "Prescription", icon: <FaPrescriptionBottleAlt /> },
+  { name: "All", icon: <FaPrescriptionBottleAlt /> },
+  { name: "Prescription Medicines", icon: <FaPrescriptionBottleAlt /> },
   { name: "OTC Medicines", icon: <FaCapsules /> },
   { name: "Supplements", icon: <FaLeaf /> },
   { name: "Wellness", icon: <FaHeartbeat /> },
   { name: "Personal Care", icon: <FaUserMd /> },
+  { name: "Monitoring Devices", icon: <FaLeaf /> },
+  { name: "Baby & Mother Care", icon: <FaLeaf /> },
 ];
 
 const VITE_GET_PRODUCTS = import.meta.env.VITE_GET_PRODUCTS;
@@ -30,6 +33,11 @@ const ProductContainer = () => {
   const [products, setProducts] = useState([]);
   const cartQuantity = useSelector((state)=>state.userAction.cartQuantity)
   const dispatch = useDispatch();
+  const [catogory, setCatogory] = useState("All");
+
+  const handleCatogory = (catog)=>{
+    setCatogory(catog)
+  }
 
   useEffect(() => {
     async function fetchProducts() {
@@ -58,7 +66,7 @@ const ProductContainer = () => {
         {sidebarItems.map((item, index) => (
           <button
             key={index}
-            className="flex items-center gap-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition"
+            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition" onClick={()=>handleCatogory(item.name)}
           >
             {item.icon}
             {item.name}
@@ -78,7 +86,7 @@ const ProductContainer = () => {
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
-            Prescription Medications
+            {catogory}
           </h1>
 
           <div className="flex gap-2 mt-3 md:mt-0">
@@ -101,7 +109,7 @@ const ProductContainer = () => {
           layout
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
-          {products.map((product) => (
+          {products.filter((product)=>catogory == "All" ? product: product.catogory == catogory).map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </motion.div>
